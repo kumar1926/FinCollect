@@ -9,10 +9,19 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var isActive = false
+    @AppStorage("isFirstLaunch") var isFirstLaunch: Bool = true
     var body: some View {
         ZStack{
             if isActive {
-                Text("Hello, World!")
+                if isFirstLaunch {
+                    OnboardingScreen(skipAction: {
+                        isFirstLaunch = false
+                    }, finishAction: {
+                        isFirstLaunch = false
+                    })
+                } else {
+                    LoginView()
+                }
             } else {
                 SplashScreen()
             }
