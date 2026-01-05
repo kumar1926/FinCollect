@@ -9,6 +9,9 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var isActive = false
+    @State private var isSignUp: Bool = false
+    @State private var isSignIn: Bool = false
+    @State private var isForgotPassword: Bool = false
     @AppStorage("isFirstLaunch") var isFirstLaunch: Bool = true
     var body: some View {
         ZStack{
@@ -16,11 +19,37 @@ struct ContentView: View {
                 if isFirstLaunch {
                     OnboardingScreen(skipAction: {
                         isFirstLaunch = false
+                        isSignIn = true
                     }, finishAction: {
                         isFirstLaunch = false
+                        isSignIn = true
                     })
-                } else {
-                    LoginView()
+                } else if isSignIn {
+                    LoginView(signUpAction: {
+                        isSignUp = true
+                        isSignIn = false
+                        isForgotPassword = false
+                    }, signInAction: {
+                        
+                    }, forgotPasswordAction: {
+                        
+                    })
+                }else if isSignUp {
+                    SignUpView(signInAction: {
+                        isSignIn = true
+                        isSignUp = false
+                        isForgotPassword = false
+                    })
+                }else{
+                    LoginView(signUpAction: {
+                        isSignUp = true
+                        isSignIn = false
+                        isForgotPassword = false
+                    }, signInAction: {
+                        
+                    }, forgotPasswordAction: {
+                        
+                    })
                 }
             } else {
                 SplashScreen()
