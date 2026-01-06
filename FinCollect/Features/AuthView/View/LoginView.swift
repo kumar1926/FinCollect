@@ -109,7 +109,7 @@ struct LoginView: View {
                 .padding(.horizontal, 20)
                 .padding(.vertical, 5)
                 Spacer()
-                VStack(spacing: 15){
+                VStack(spacing: 20){
                     Button{
                         //sign in action
                     }label: {

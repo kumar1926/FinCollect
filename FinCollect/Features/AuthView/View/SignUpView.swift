@@ -151,7 +151,7 @@ struct SignUpView: View {
                 .padding(.horizontal,20)
                 .padding(.vertical,5)
                 Spacer()
-                VStack(spacing: 10){
+                VStack(spacing: 20){
                     Button{
                         
                     }label: {
