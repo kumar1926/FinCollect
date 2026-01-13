@@ -8,7 +8,7 @@
 import Foundation
 
 struct AppUser: Codable,Identifiable{
-    var id: UUID = UUID()
+    var id: String
     var name: String
     var email: String
     var joinedDate: Date

@@ -8,10 +8,7 @@
 import SwiftUI
 
 struct SignUpView: View {
-    @State private var name: String = ""
-    @State private var email: String = ""
-    @State private var password: String = ""
-    @State private var confirmPassword: String = ""
+    @StateObject var viewModel:AuthViewModel = AuthViewModel()
     @State private var isShowPassword: Bool = false
     @State private var isShowConfirmPassword: Bool = false
     var signInAction: () -> Void = {}
@@ -25,7 +22,7 @@ struct SignUpView: View {
                         .cornerRadius(100)
                     Text("Create Account")
                         .font(.system(size: 30, weight: .bold, design: .monospaced))
-                        
+                    
                         .padding(10)
                     Text("Start tracking your lending today")
                         .font(Font.system(size: 16, weight: .regular, design: .monospaced))
@@ -37,17 +34,17 @@ struct SignUpView: View {
                 VStack(spacing:15){
                     VStack(alignment: .leading, spacing: 6){
                         
-                            Text("Full Name")
-                                .font(Font.system(size: 16, weight: .semibold, design: .monospaced))
-                            
+                        Text("Full Name")
+                            .font(Font.system(size: 16, weight: .semibold, design: .monospaced))
+                        
                         
                         HStack{
                             Image(systemName: "person.fill")
                                 .foregroundStyle(Color(UIColor.lightGray))
                                 .padding(.trailing, 8)
-                            TextField("Enter your name", text: $name)
+                            TextField("Enter your name", text: $viewModel.name)
                                 .foregroundColor(Color(UIColor.label))
-                                
+                            
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 14)
@@ -59,17 +56,17 @@ struct SignUpView: View {
                     }
                     VStack(alignment: .leading, spacing: 6){
                         
-                            Text("Email")
-                                .font(Font.system(size: 16, weight: .semibold, design: .monospaced))
-                            
+                        Text("Email")
+                            .font(Font.system(size: 16, weight: .semibold, design: .monospaced))
+                        
                         
                         HStack{
                             Image(systemName: "envelope.fill")
                                 .foregroundStyle(Color(UIColor.lightGray))
                                 .padding(.trailing, 8)
-                            TextField("Enter your email", text: $email)
+                            TextField("Enter your email", text: $viewModel.email)
                                 .foregroundColor(Color(UIColor.label))
-                                
+                            
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 14)
@@ -90,12 +87,12 @@ struct SignUpView: View {
                                 .padding(.trailing, 8)
                             
                             if isShowPassword {
-                                TextField("Enter password", text: $password)
+                                TextField("Enter password", text: $viewModel.password)
                                     .foregroundColor(.primary)
                                 
                             } else {
                                 
-                                SecureField("Enter password", text: $password)
+                                SecureField("Enter password", text: $viewModel.password)
                                     .foregroundColor(.primary)
                             }
                             
@@ -124,12 +121,12 @@ struct SignUpView: View {
                                 .padding(.trailing, 8)
                             
                             if isShowConfirmPassword {
-                                TextField("Enter password", text: $confirmPassword)
+                                TextField("Enter password", text: $viewModel.confirmPassword)
                                     .foregroundColor(.primary)
                                 
                             } else {
                                 
-                                SecureField("Enter password", text: $confirmPassword)
+                                SecureField("Enter password", text: $viewModel.confirmPassword)
                                     .foregroundColor(.primary)
                             }
                             
@@ -153,14 +150,21 @@ struct SignUpView: View {
                 Spacer()
                 VStack(spacing: 20){
                     Button{
-                        
+                        viewModel.registerUser()
                     }label: {
-                        Text("Sign Up")
-                            .frame(maxWidth: .infinity)
+                        if viewModel.isLoading{
+                            ProgressView()
+                                .tint(.white)
+                        }else{
+                            Text("Sign Up")
+                                .frame(maxWidth: .infinity)
+                        }
+                        
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
                     .buttonSizing(.flexible)
+                    .disabled(viewModel.isLoading)
                     HStack{
                         Text("Already have an account?")
                             .font(.system(size: 14,weight: .light,design: .monospaced))
@@ -176,6 +180,18 @@ struct SignUpView: View {
                 .padding(.horizontal,20)
                 .padding(.vertical,5)
                 Spacer()
+            }
+            .alert("Error",isPresented: $viewModel.showError){
+                Button("OK",role: .cancel){}
+            }message: {
+                Text(viewModel.errorMessage ?? "Error")
+            }
+            .alert("Success",isPresented: $viewModel.showSuccess){
+                Button("OK") {
+                    signInAction()
+                }
+            }message: {
+                Text(viewModel.errorMessage ?? "Success")
             }
         }
     }

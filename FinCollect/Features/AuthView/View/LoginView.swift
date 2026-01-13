@@ -9,10 +9,8 @@ import SwiftUI
 
 struct LoginView: View {
     @State private var isShowPassword: Bool = false
-    @State private var email: String = ""
-    @State private var password: String = ""
+    @StateObject var viewModel:AuthViewModel = AuthViewModel()
     var signUpAction: () -> Void = { }
-    var signInAction: () -> Void = { }
     var forgotPasswordAction: () -> Void = { }
     var body: some View {
         NavigationStack{
@@ -45,7 +43,7 @@ struct LoginView: View {
                             Image(systemName: "envelope.fill")
                                 .foregroundStyle(Color(UIColor.lightGray))
                                 .padding(.trailing, 8)
-                            TextField("Enter your email", text: $email)
+                            TextField("Enter your email", text: $viewModel.email)
                                 .foregroundColor(Color(UIColor.label))
                                 
                         }
@@ -69,12 +67,12 @@ struct LoginView: View {
                                 .padding(.trailing, 8)
                             
                             if isShowPassword {
-                                TextField("Enter password", text: $password)
+                                TextField("Enter password", text: $viewModel.password)
                                     .foregroundColor(.primary)
                                 
                             } else {
                                 
-                                SecureField("Enter password", text: $password)
+                                SecureField("Enter password", text: $viewModel.password)
                                     .foregroundColor(.primary)
                             }
                             
@@ -111,15 +109,22 @@ struct LoginView: View {
                 Spacer()
                 VStack(spacing: 20){
                     Button{
-                        //sign in action
+                        viewModel.loginUser()
                     }label: {
-                        Text("Sign in")
-                            .font(.system(size: 16,weight: .bold, design: .monospaced))
-                            .frame(maxWidth: .infinity)
+                        if viewModel.isLoading{
+                            ProgressView()
+                                .tint(.white)
+                        }else{
+                            Text("Sign in")
+                                .font(.system(size: 16,weight: .bold, design: .monospaced))
+                                .frame(maxWidth: .infinity)
+                        }
+                        
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
                     .buttonSizing(.flexible)
+                    .disabled(viewModel.isLoading)
                     HStack{
                         Text("Don't have an account?")
                             .font(.system(size: 14,weight: .light,design: .monospaced))
@@ -139,6 +144,11 @@ struct LoginView: View {
                 Spacer()
             }
             .navigationTitle("Login")
+            .alert("Error", isPresented: $viewModel.showError){
+                Button("OK",role: .cancel){}
+            }message: {
+                Text(viewModel.errorMessage ?? "Error")
+            }
             .navigationBarTitleDisplayMode(.automatic)
         }
        

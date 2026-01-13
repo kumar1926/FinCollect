@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var authVM = AuthViewModel()
     @State private var isActive = false
     @State private var isSignUp: Bool = false
     @State private var isSignIn: Bool = false
@@ -16,41 +17,42 @@ struct ContentView: View {
     var body: some View {
         ZStack{
             if isActive {
-                if isFirstLaunch {
-                    OnboardingScreen(skipAction: {
-                        isFirstLaunch = false
-                        isSignIn = true
-                    }, finishAction: {
-                        isFirstLaunch = false
-                        isSignIn = true
-                    })
-                } else if isSignIn {
-                    LoginView(signUpAction: {
-                        isSignUp = true
-                        isSignIn = false
-                        isForgotPassword = false
-                    }, signInAction: {
-                        
-                    }, forgotPasswordAction: {
-                        
-                    })
-                }else if isSignUp {
-                    SignUpView(signInAction: {
-                        isSignIn = true
-                        isSignUp = false
-                        isForgotPassword = false
-                    })
+                if authVM.isAuthenticated {
+                    Text("Home View")
                 }else{
-                    LoginView(signUpAction: {
-                        isSignUp = true
-                        isSignIn = false
-                        isForgotPassword = false
-                    }, signInAction: {
-                        
-                    }, forgotPasswordAction: {
-                        
-                    })
+                    if isFirstLaunch {
+                        OnboardingScreen(skipAction: {
+                            isFirstLaunch = false
+                            isSignIn = true
+                        }, finishAction: {
+                            isFirstLaunch = false
+                            isSignIn = true
+                        })
+                    } else if isSignIn {
+                        LoginView(signUpAction: {
+                            isSignUp = true
+                            isSignIn = false
+                            isForgotPassword = false
+                        }, forgotPasswordAction: {
+                            
+                        })
+                    }else if isSignUp {
+                        SignUpView(signInAction: {
+                            isSignIn = true
+                            isSignUp = false
+                            isForgotPassword = false
+                        })
+                    }else{
+                        LoginView(signUpAction: {
+                            isSignUp = true
+                            isSignIn = false
+                            isForgotPassword = false
+                        }, forgotPasswordAction: {
+                            
+                        })
+                    }
                 }
+                
             } else {
                 SplashScreen()
             }
